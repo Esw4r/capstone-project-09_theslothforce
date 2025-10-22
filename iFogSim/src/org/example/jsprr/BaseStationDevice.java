@@ -85,4 +85,7 @@ public class BaseStationDevice {
         uplinkUsed = 0;
         downlinkUsed = 0;
     }
+
+
+    
 }

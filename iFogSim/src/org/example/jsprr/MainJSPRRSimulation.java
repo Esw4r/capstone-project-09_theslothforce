@@ -3,15 +3,12 @@ package org.example.jsprr;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.*;
 
-/**
- * JSPRR Simulation that reads all inputs from dataset CSV files.
- */
+
 public class MainJSPRRSimulation {
 
     public static void main(String[] args) throws Exception {
-        String datasetDir = "data/jsprr_dataset_extended"; // path where CSVs are extracted
+        String datasetDir = "dataset/jsprr_dataset_extended"; // path where CSVs are extracted
 
         // ========= 1. Load Base Stations =========
         List<BaseStationDevice> bases = new ArrayList<>();
@@ -51,23 +48,31 @@ public class MainJSPRRSimulation {
             }
         }
 
-        // ========= 3. Load Services =========
+     // ========= 3. Load Services =========
         List<ServiceModule> services = new ArrayList<>();
         try (BufferedReader br = Files.newBufferedReader(Paths.get(datasetDir, "services_extended.csv"))) {
             String header = br.readLine();
+            // Handle tab- or comma-separated files safely
+            String delimiter = header.contains("\t") ? "\t" : ",";
+            String[] cols = header.replace("\uFEFF", "").replace("\"", "").split(delimiter);
+            Map<String, Integer> col = new HashMap<>();
+            for (int i = 0; i < cols.length; i++) {
+                col.put(cols[i].trim().toLowerCase(), i);
+            }
+
             String line;
             while ((line = br.readLine()) != null) {
-                String[] v = line.split(",");
-                String id = v[0];
-                double cpu = Double.parseDouble(v[1]);
-                double mem = Double.parseDouble(v[2]);
-                double cost = Double.parseDouble(v[7]); // Execution_Cost
-                double latency = Double.parseDouble(v[4]); // VM_Fixed_Latency_ms
+                if (line.trim().isEmpty()) continue;
+                String[] v = line.split(delimiter);
+                String id = v[col.get("service_id")].trim();
+                double cpu = Double.parseDouble(v[col.get("cpu_capacity_ghz")].trim());
+                double mem = Double.parseDouble(v[col.get("memory_capacity_gb")].trim());
+                double cost = Double.parseDouble(v[col.get("execution_cost")].trim());
+                double latency = Double.parseDouble(v[col.get("vm_fixed_latency_ms")].trim());
                 ServiceModule svc = new ServiceModule(id, cpu, mem, cost, latency);
                 services.add(svc);
             }
         }
-
         // ========= 4. Load User Requests (optional demonstration) =========
         // You can later extend this to model per-user demands, offloading decisions, etc.
         List<String> userLines = Files.readAllLines(Paths.get(datasetDir, "user_requests_extended.csv"));

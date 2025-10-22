@@ -12,6 +12,13 @@ public class BaseStationDevice {
     private double uplinkUsed;
     private double downlinkUsed;
 
+    private double storage;
+    private double usedStorage;
+    private double cpuCapacity;
+    private double usedCPU;
+    private double usedUplink;
+    private double usedDownlink;
+
     public BaseStationDevice(String name, double storageCapacity, double computeCapacity,
                              double uplinkCapacity, double downlinkCapacity) {
         this.name = name;
@@ -29,13 +36,20 @@ public class BaseStationDevice {
     public String getName() { return name; }
     public double getStorageCapacity() { return storageCapacity; }
     public double getComputeCapacity() { return computeCapacity; }
-    public double getUplinkCapacity() { return uplinkCapacity; }
-    public double getDownlinkCapacity() { return downlinkCapacity; }
 
     public double getStorageUsed() { return storageUsed; }
     public double getComputeUsed() { return computeUsed; }
     public double getUplinkUsed() { return uplinkUsed; }
     public double getDownlinkUsed() { return downlinkUsed; }
+
+    public double getStorage() { return storage; }
+    public double getUsedStorage() { return usedStorage; }
+    public double getCpuCapacity() { return cpuCapacity; }
+    public double getUsedCPU() { return usedCPU; }
+    public double getUplinkCapacity() { return uplinkCapacity; }
+    public double getUsedUplink() { return usedUplink; }
+    public double getDownlinkCapacity() { return downlinkCapacity; }
+    public double getUsedDownlink() { return usedDownlink; }
 
     // --- Resource management ---
     public synchronized boolean deploy(ServiceModule svc) {
